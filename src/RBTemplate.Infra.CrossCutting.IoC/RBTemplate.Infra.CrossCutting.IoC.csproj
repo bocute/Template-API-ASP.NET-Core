@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RBTemplate.Domain\RBTemplate.Domain.csproj" />
+    <ProjectReference Include="..\RBTemplate.Infra.CrossCutting.AspNetFilters\RBTemplate.Infra.CrossCutting.AspNetFilters.csproj" />
+    <ProjectReference Include="..\RBTemplate.Infra.CrossCutting.Identity\RBTemplate.Infra.CrossCutting.Identity.csproj" />
+    <ProjectReference Include="..\RBTemplate.Infra.Data\RBTemplate.Infra.Data.csproj" />
+  </ItemGroup>
+
+</Project>

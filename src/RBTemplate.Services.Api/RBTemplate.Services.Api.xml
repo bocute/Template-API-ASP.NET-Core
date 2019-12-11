@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RBTemplate.Services.Api</name>
+    </assembly>
+    <members>
+        <member name="M:RBTemplate.Services.Api.Controllers.ExampleController.Get(System.Nullable{System.Int32},System.Int32)">
+            <summary>
+            Buscar todos os itens.
+            </summary>
+            <param name="pageNumber">Número da página</param>   
+            <param name="pageSize">Tamanho da página</param>   
+        </member>
+    </members>
+</doc>
