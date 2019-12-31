@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Ymagi.Infra.CrossCutting.Identity.Models.AccountVIewModel
+namespace RBTemplate.Infra.CrossCutting.Identity.Models.AccountVIewModel
 {
     public class LoginViewModel
     {
@@ -11,8 +11,10 @@ namespace Ymagi.Infra.CrossCutting.Identity.Models.AccountVIewModel
         [EmailAddress(ErrorMessage = "E-mail em formato inválido.")]
         public string Email { get; set; }
 
-        [Required]
         [DataType(DataType.Password)]
         public string Senha { get; set; }
+        [Required]
+        public string GrantType { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

@@ -9,8 +9,10 @@ using RBTemplate.Domain.Entities.Exemplo.Business;
 using RBTemplate.Domain.Interfaces;
 using RBTemplate.Domain.Notifications;
 using RBTemplate.Infra.CrossCutting.AspNetFilters;
+using RBTemplate.Infra.CrossCutting.Identity.Authorization;
 using RBTemplate.Infra.CrossCutting.Identity.Data;
 using RBTemplate.Infra.CrossCutting.Identity.Models;
+using RBTemplate.Infra.CrossCutting.Identity.Repository;
 using RBTemplate.Infra.CrossCutting.Identity.SendEmail;
 using RBTemplate.Infra.Data.Contexts;
 using RBTemplate.Infra.Data.Repository;
@@ -43,8 +45,10 @@ namespace RBTemplate.Infra.CrossCutting.IoC
             services.AddScoped<IExampleRepository, ExampleRepository>();
 
             // Infra - Identity
+            services.AddScoped<RefreshTokenContext>();
             services.AddScoped<DbContext, ApplicationDbContext>();
             services.AddScoped<IUser, AspNetUser>();
+            services.AddScoped<IRefreshTokenRepository<RefreshTokenData>, RefreshTokenRepository>();
 
             //Configurações E-mail
             services.AddTransient<IEmailSender, EmailSender>();

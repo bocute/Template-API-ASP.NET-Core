@@ -18,8 +18,9 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RBTemplate.Domain.Interfaces;
 using RBTemplate.Infra.CrossCutting.Identity.Models;
-using Ymagi.Infra.CrossCutting.Identity.Authorization;
-using Ymagi.Infra.CrossCutting.Identity.Models.AccountVIewModel;
+using RBTemplate.Infra.CrossCutting.Identity.Authorization;
+using RBTemplate.Infra.CrossCutting.Identity.Models.AccountVIewModel;
+using System.Security.Cryptography;
 
 namespace RBTemplate.Services.Api.Controllers
 {
@@ -40,6 +41,7 @@ namespace RBTemplate.Services.Api.Controllers
         private readonly IHostEnvironment _hostingEnviroment;
         private readonly IMapper _mapper;
         private readonly HttpClient _httpClient;
+        private readonly IRefreshTokenRepository<RefreshTokenData> _refreshTokenRepository;
 
         private static long ToUnixEpochDate(DateTime date)
         => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
@@ -57,7 +59,8 @@ namespace RBTemplate.Services.Api.Controllers
                     IConfiguration config,
                     IMapper mapper,
                     HttpClient httpClient,
-                    IOptions<ExternalAuthFacebookOptions> optionsAccessor) : base(notifications, user)
+                    IOptions<ExternalAuthFacebookOptions> optionsAccessor,
+                    IRefreshTokenRepository<RefreshTokenData> refreshTokenRepository) : base(notifications, user)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -69,6 +72,7 @@ namespace RBTemplate.Services.Api.Controllers
             _mapper = mapper;
             _httpClient = httpClient;
             Options = optionsAccessor.Value;
+            _refreshTokenRepository = refreshTokenRepository;
         }
         #endregion
 
@@ -208,16 +212,49 @@ namespace RBTemplate.Services.Api.Controllers
                 return await ResponseAsync(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Senha, false, true);
-
-            if (result.Succeeded)
+            if (model.GrantType == "password")
             {
+                if (model.Senha == null)
+                {
+                    await NotifyError("Login", "E-mail ou senha incorreto(s)");
+                    return await ResponseAsync(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Senha, false, true);
+
+                if (result.Succeeded)
+                {
+                    var response = await GenerateToken(model);
+                    return await ResponseAsync(response);
+                }
+
+                await NotifyError(result.ToString(), "E-mail ou senha incorreto(s)");
+                return await ResponseAsync(model);
+            }
+            else if (model.GrantType == "refresh_token")
+            {
+                if (user == null)
+                {
+                    await NotifyError("RefreshToken", "Usuário não encontrado");
+                    return await ResponseAsync(model);
+                }
+
+                var refreshToken = _refreshTokenRepository.GetByRefreshToken(user.Id, model.RefreshToken);
+
+                if (refreshToken == null || refreshToken.ExpirationDate < DateTime.Now)
+                {
+                    await NotifyError("RefreshToken", "RefreshToken não autorizado");
+                    return await ResponseAsync(model);
+                }
+
                 var response = await GenerateToken(model);
                 return await ResponseAsync(response);
+               
             }
 
-            await NotifyError(result.ToString(), "E-mail ou senha incorreto(s)");
+            await NotifyError("Login", "Tipo de login inválido.");
             return await ResponseAsync(model);
+
         }
 
         [HttpPost]
@@ -332,6 +369,7 @@ namespace RBTemplate.Services.Api.Controllers
             {
                 access_token = encodedJwt,
                 expires_in = DateTime.Now.AddMinutes(_tokenDescriptor.MinutesValid),
+                refresh_token = GenerateRefreshToken(user.Id).RefreshToken,
                 user = new
                 {
                     id = user.Id,
@@ -341,6 +379,31 @@ namespace RBTemplate.Services.Api.Controllers
             };
 
             return response;
+        }
+
+        private RefreshTokenData GenerateRefreshToken(string userId)
+        {
+            string token;
+            var randomNumber = new byte[32];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                token = Convert.ToBase64String(randomNumber);
+            }
+
+            var refreshToken = new RefreshTokenData
+            {
+                UsuarioId = userId,
+                ExpirationDate = DateTime.Now.AddMinutes(_tokenDescriptor.MinutesRefreshTokenValid),
+                RefreshToken = token.Replace("+", string.Empty)
+                                    .Replace("=", string.Empty)
+                                    .Replace("/", string.Empty)
+            };
+
+            _refreshTokenRepository.Add(refreshToken);
+
+            return refreshToken;
         }
 
         [HttpPost]
