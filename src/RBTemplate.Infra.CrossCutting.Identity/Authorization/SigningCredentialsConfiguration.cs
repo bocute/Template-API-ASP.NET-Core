@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Ymagi.Infra.CrossCutting.Identity.Authorization
+namespace RBTemplate.Infra.CrossCutting.Identity.Authorization
 {
     public static class SigningCredentialsConfiguration
     {

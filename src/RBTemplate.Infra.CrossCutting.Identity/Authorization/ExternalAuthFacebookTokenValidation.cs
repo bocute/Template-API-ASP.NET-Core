@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ymagi.Infra.CrossCutting.Identity.Authorization
+namespace RBTemplate.Infra.CrossCutting.Identity.Authorization
 {
     public class ExternalAuthFacebookTokenValidation
     {

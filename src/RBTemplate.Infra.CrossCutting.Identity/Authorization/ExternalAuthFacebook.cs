@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Ymagi.Infra.CrossCutting.Identity.Authorization
+namespace RBTemplate.Infra.CrossCutting.Identity.Authorization
 {
     public class ExternalAuthFacebook
     {

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Ymagi.Infra.CrossCutting.Identity.Models.AccountVIewModel
+namespace RBTemplate.Infra.CrossCutting.Identity.Models.AccountVIewModel
 {
     public class RegisterUserViewModel
     {

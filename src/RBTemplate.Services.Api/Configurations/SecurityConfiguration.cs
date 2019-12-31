@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using System;
 using Microsoft.Extensions.Configuration;
-using Ymagi.Infra.CrossCutting.Identity.Authorization;
+using RBTemplate.Infra.CrossCutting.Identity.Authorization;
 using RBTemplate.Infra.CrossCutting.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using RBTemplate.Infra.CrossCutting.Identity.Data;
