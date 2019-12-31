@@ -13,7 +13,14 @@ Template de API desenvolvido em ASP.NET Core 3.1.
 
 # Configurações
 - Necessário criar o arquivo "appsettings.json", dentro do projeto "RBTemplate.Services.Api", para configurar:
-  - Chave secreta para a geração de token. Formato:  "SecretKeyJwT": "SUA_CHAVE_AQUI";
+  - Chave secreta para a geração de token. Formato: "SecretKeyJwT": "SUA_CHAVE_AQUI";
+  - Exemplo de Configurações do Token:
+  "JwtTokenOptions": {
+  "Issuer": "TemplateIoTokenServer",
+  "Audience": "http://localhost",
+  "MinutesValid": "60",
+  "MinutesRefreshTokenValid": "120"
+  }
   - Conexão com banco de dados. Formato: "ConnectionStrings": { "DefaultConnection": "STRING DE CONEXÃO AQUI" }
 
 # Divisão da Solução
